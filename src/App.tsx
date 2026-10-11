@@ -33,7 +33,7 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-charcoal-900 flex">
+    <div className="min-h-screen bg-cream bg-confetti flex">
       <Sidebar />
       <main className="flex-1 min-w-0">
         {renderPage()}

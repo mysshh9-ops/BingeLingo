@@ -1,12 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from '@/lib/router';
-import { supabase } from '@/lib/supabase';
 import { useSessionVocabulary, toggleVocabKnown } from '@/lib/hooks';
 import type { Vocabulary } from '@/types';
 import {
   ArrowLeft, Layers, RotateCcw, Check, X, ChevronLeft, ChevronRight,
-  Loader2, AlertCircle, BookOpen,
+  Loader2, AlertCircle, BookOpen, Sparkles,
 } from 'lucide-react';
+import { Mascot } from '@/components/Mascot';
+
+const cardThemes = [
+  { front: 'from-bubble-300 to-bubble-400', back: 'from-bubble-200 to-bubble-300', accent: 'text-bubble-700' },
+  { front: 'from-lav-300 to-lav-400', back: 'from-lav-200 to-lav-300', accent: 'text-lav-700' },
+  { front: 'from-sky-300 to-sky-400', back: 'from-sky-200 to-sky-300', accent: 'text-sky-700' },
+  { front: 'from-peach-300 to-peach-400', back: 'from-peach-200 to-peach-300', accent: 'text-peach-700' },
+  { front: 'from-butter-300 to-butter-400', back: 'from-butter-200 to-butter-300', accent: 'text-butter-700' },
+];
 
 export function FlashcardsPage({ sessionId }: { sessionId: string }) {
   const { navigate } = useRouter();
@@ -52,8 +60,10 @@ export function FlashcardsPage({ sessionId }: { sessionId: string }) {
   if (loading) {
     return (
       <div className="px-4 md:px-8 py-8 max-w-2xl mx-auto pb-24 md:pb-8">
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 text-lavender animate-spin" />
+        <div className="flex flex-col items-center justify-center py-20">
+          <Mascot size={70} expression="thinking" className="animate-float" />
+          <Loader2 className="w-6 h-6 text-lav-500 animate-spin mt-4" />
+          <p className="text-sm text-ink-soft mt-3 font-medium">Loading your cards...</p>
         </div>
       </div>
     );
@@ -62,9 +72,9 @@ export function FlashcardsPage({ sessionId }: { sessionId: string }) {
   if (error) {
     return (
       <div className="px-4 md:px-8 py-8 max-w-2xl mx-auto pb-24 md:pb-8">
-        <div className="bg-rose/10 rounded-xl border border-rose/20 p-5 flex items-center gap-2">
-          <AlertCircle className="w-5 h-5 text-rose" />
-          <p className="text-sm text-rose">{error}</p>
+        <div className="bg-bubble-50 rounded-2xl border-2 border-bubble-200 p-5 flex items-center gap-2 animate-shake">
+          <AlertCircle className="w-5 h-5 text-bubble-600" />
+          <p className="text-sm text-bubble-700 font-medium">{error}</p>
         </div>
       </div>
     );
@@ -75,93 +85,100 @@ export function FlashcardsPage({ sessionId }: { sessionId: string }) {
       <div className="px-4 md:px-8 py-8 max-w-2xl mx-auto pb-24 md:pb-8">
         <button
           onClick={() => navigate('lesson', sessionId)}
-          className="flex items-center gap-1.5 text-sm text-cream-muted hover:text-cream transition-colors mb-4"
+          className="flex items-center gap-1.5 text-sm text-ink-soft hover:text-grape-700 transition-colors mb-4 font-bold"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to lesson
         </button>
-        <div className="bg-charcoal-800 rounded-xl border border-charcoal-700/50 p-8 text-center">
-          <Layers className="w-10 h-10 text-cream-muted mx-auto mb-3" />
-          <h2 className="text-cream font-medium mb-1">No flashcards yet</h2>
-          <p className="text-sm text-cream-muted">This episode has no vocabulary to review.</p>
+        <div className="bg-white/60 rounded-3xl border-2 border-dashed border-lav-200 p-8 text-center">
+          <div className="flex justify-center mb-3">
+            <Mascot size={70} expression="thinking" />
+          </div>
+          <h2 className="text-grape-800 font-bold font-display text-lg mb-1">No flashcards yet!</h2>
+          <p className="text-sm text-ink-soft font-medium">This episode has no vocabulary to review.</p>
         </div>
       </div>
     );
   }
 
   const current = filteredVocab[currentIdx];
+  const theme = cardThemes[currentIdx % cardThemes.length];
 
   return (
     <div className="px-4 md:px-8 py-6 md:py-8 max-w-2xl mx-auto pb-24 md:pb-8">
       <button
         onClick={() => navigate('lesson', sessionId)}
-        className="flex items-center gap-1.5 text-sm text-cream-muted hover:text-cream transition-colors mb-4 animate-fade-in"
+        className="flex items-center gap-1.5 text-sm text-ink-soft hover:text-grape-700 transition-colors mb-4 font-bold animate-fade-in"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to lesson
       </button>
 
-      <div className="flex items-center justify-between mb-2 animate-fade-in-up">
-        <h1 className="text-xl font-bold text-cream flex items-center gap-2">
-          <Layers className="w-5 h-5 text-lavender" />
+      <div className="flex items-center justify-between mb-3 animate-fade-in-up">
+        <h1 className="text-xl font-bold font-display text-grape-800 flex items-center gap-2">
+          <span className="text-2xl">🃏</span>
           Flashcards
         </h1>
-        <span className="text-sm text-cream-muted">
+        <span className="text-sm font-bold text-ink-soft bg-white/60 px-3 py-1 rounded-chip">
           {currentIdx + 1} / {filteredVocab.length}
         </span>
       </div>
 
-      <div className="h-1.5 bg-charcoal-800 rounded-full overflow-hidden mb-6 animate-fade-in-up" style={{ animationDelay: '0.05s' }}>
+      {/* Progress bar */}
+      <div className="h-3 bg-lav-100 rounded-full overflow-hidden mb-6 animate-fade-in-up" style={{ animationDelay: '0.05s' }}>
         <div
-          className="h-full bg-gradient-to-r from-lavender to-rose transition-all duration-300"
+          className="h-full bg-gradient-to-r from-bubble-400 via-peach-400 to-butter-400 rounded-full transition-all duration-300"
           style={{ width: `${((currentIdx + 1) / filteredVocab.length) * 100}%` }}
         />
       </div>
 
       <div key={currentIdx} className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
+        {/* Card */}
         <div
           className="perspective-1000 cursor-pointer mb-6"
           onClick={() => setIsFlipped(!isFlipped)}
         >
           <div
-            className={`relative w-full min-h-[280px] transition-transform duration-500 transform-style-preserve-3d ${
+            className={`relative w-full min-h-[300px] transition-transform duration-500 transform-style-preserve-3d ${
               isFlipped ? 'rotate-y-180' : ''
             }`}
           >
             {/* Front — Korean */}
-            <div className="absolute inset-0 backface-hidden bg-gradient-to-br from-charcoal-800 to-charcoal-850 rounded-2xl border border-charcoal-700/50 p-8 flex flex-col items-center justify-center card-glow">
-              <div className="absolute top-4 left-5 text-xs text-cream-muted uppercase tracking-wider font-medium">
+            <div className={`absolute inset-0 backface-hidden bg-gradient-to-br ${theme.front} rounded-3xl border-4 border-white p-8 flex flex-col items-center justify-center card-shadow`}>
+              <div className="absolute top-4 left-5 text-xs text-white/80 uppercase tracking-wider font-bold">
                 Korean
               </div>
-              <p className="font-korean text-4xl md:text-5xl text-cream text-center leading-relaxed mb-4">
+              <Sparkles className="absolute top-4 right-5 w-5 h-5 text-white/60 animate-sparkle" />
+              <p className="font-korean text-4xl md:text-5xl text-white text-center leading-relaxed mb-4 font-bold drop-shadow-lg">
                 {current.word_hangul}
               </p>
-              <p className="text-sm text-lavender-dim italic">{current.word_romanization}</p>
-              <p className="text-xs text-cream-muted mt-6">Tap to reveal translation</p>
+              <p className="text-sm text-white/80 italic font-medium">{current.word_romanization}</p>
+              <p className="text-xs text-white/60 mt-6 font-bold">Tap to flip! 👆</p>
             </div>
 
             {/* Back — English */}
-            <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-charcoal-700 to-charcoal-800 rounded-2xl border border-lavender/20 p-8 flex flex-col items-center justify-center card-glow">
-              <div className="absolute top-4 left-5 text-xs text-lavender uppercase tracking-wider font-medium">
+            <div className={`absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br ${theme.back} rounded-3xl border-4 border-white p-8 flex flex-col items-center justify-center card-shadow`}>
+              <div className={`absolute top-4 left-5 text-xs ${theme.accent} uppercase tracking-wider font-bold`}>
                 English
               </div>
-              <p className="text-2xl md:text-3xl text-cream text-center font-semibold mb-3">
+              <p className="text-2xl md:text-3xl text-grape-900 text-center font-bold font-display mb-3">
                 {current.word_translation}
               </p>
               {current.part_of_speech && (
-                <span className="text-xs px-3 py-1 rounded-full bg-rose/10 text-rose border border-rose/15 font-medium mt-2">
+                <span className="text-xs px-3 py-1.5 rounded-chip bg-white/60 text-grape-700 font-bold border border-white mt-2 -rotate-2">
                   {current.part_of_speech}
                 </span>
               )}
-              <p className="text-xs text-cream-muted mt-6">Tap to flip back</p>
+              <p className="text-xs text-grape-600 mt-6 font-bold">Tap to flip back 👆</p>
             </div>
           </div>
         </div>
 
+        {/* Controls */}
         <div className="flex items-center justify-between gap-3 mb-4">
           <button
             onClick={handlePrev}
-            className="w-12 h-12 rounded-xl bg-charcoal-800 border border-charcoal-700/50 flex items-center justify-center text-cream-muted hover:text-cream hover:border-lavender/30 transition-all"
+            className="w-12 h-12 rounded-2xl bg-white/80 border-2 border-lav-100 flex items-center justify-center text-ink-soft hover:text-grape-700 hover:border-lav-300 transition-all sticker-shadow active:scale-90"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -169,39 +186,40 @@ export function FlashcardsPage({ sessionId }: { sessionId: string }) {
           <div className="flex-1 flex items-center gap-2">
             <button
               onClick={() => handleMarkUnknown(current)}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-rose/10 border border-rose/20 text-rose font-medium text-sm hover:bg-rose/20 transition-colors"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl bg-bubble-100 border-2 border-bubble-200 text-bubble-700 font-bold text-sm hover:bg-bubble-200 transition-all active:scale-95"
             >
               <X className="w-4 h-4" />
-              Don't know
+              Practice again
             </button>
             <button
               onClick={() => handleMarkKnown(current)}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium text-sm transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl font-bold text-sm transition-all active:scale-95 ${
                 current.is_known
-                  ? 'bg-lavender/20 border border-lavender/30 text-lavender'
-                  : 'bg-lavender/10 border border-lavender/20 text-lavender hover:bg-lavender/20'
+                  ? 'bg-lav-200 border-2 border-lav-300 text-lav-700'
+                  : 'bg-lav-100 border-2 border-lav-200 text-lav-700 hover:bg-lav-200'
               }`}
             >
               <Check className="w-4 h-4" />
-              {current.is_known ? 'Known' : 'I know this'}
+              {current.is_known ? 'Known!' : 'Know it!'}
             </button>
           </div>
 
           <button
             onClick={handleNext}
-            className="w-12 h-12 rounded-xl bg-charcoal-800 border border-charcoal-700/50 flex items-center justify-center text-cream-muted hover:text-cream hover:border-lavender/30 transition-all"
+            className="w-12 h-12 rounded-2xl bg-white/80 border-2 border-lav-100 flex items-center justify-center text-ink-soft hover:text-grape-700 hover:border-lav-300 transition-all sticker-shadow active:scale-90"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="flex items-center justify-center gap-4 text-xs text-cream-muted">
-          <span className="flex items-center gap-1">
-            <Check className="w-3.5 h-3.5 text-lavender" />
+        {/* Stats */}
+        <div className="flex items-center justify-center gap-4 text-xs font-bold">
+          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-chip bg-lav-100 text-lav-700">
+            <Check className="w-3.5 h-3.5" />
             {filteredVocab.filter(v => v.is_known).length} known
           </span>
-          <span className="flex items-center gap-1">
-            <BookOpen className="w-3.5 h-3.5 text-rose" />
+          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-chip bg-bubble-100 text-bubble-700">
+            <BookOpen className="w-3.5 h-3.5" />
             {filteredVocab.filter(v => !v.is_known).length} learning
           </span>
         </div>

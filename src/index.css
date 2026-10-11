@@ -1,27 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --color-charcoal-900: #1a1820;
-    --color-charcoal-850: #221f2b;
-    --color-charcoal-800: #2a2733;
-    --color-charcoal-700: #35303f;
-    --color-charcoal-600: #443e52;
-    --color-cream: #f5efe6;
-    --color-cream-dim: #d6cfc4;
-    --color-lavender: #b8a4d4;
-    --color-lavender-bright: #c9b3e8;
-    --color-rose: #e0999e;
-    --color-rose-bright: #ecafb4;
-  }
-
   body {
-    @apply bg-[#1a1820] text-[#f5efe6] antialiased;
-    font-family: 'Inter', 'Noto Sans KR', system-ui, sans-serif;
+    @apply text-ink antialiased;
+    font-family: 'Quicksand', 'Noto Sans KR', system-ui, sans-serif;
+    background-color: #fff9f0;
   }
 
   .font-korean {
@@ -30,6 +17,10 @@
 
   .font-korean-serif {
     font-family: 'Noto Serif KR', serif;
+  }
+
+  .font-display {
+    font-family: 'Fredoka', 'Quicksand', sans-serif;
   }
 }
 
@@ -42,19 +33,42 @@
     display: none;
   }
 
-  .text-gradient-lavender {
-    background: linear-gradient(135deg, #c9b3e8 0%, #b8a4d4 50%, #e0999e 100%);
+  .text-gradient-bubble {
+    background: linear-gradient(135deg, #f74e88 0%, #a06be0 50%, #4da9ff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  .card-glow {
-    box-shadow: 0 0 0 1px rgba(184, 164, 212, 0.08), 0 4px 24px rgba(0, 0, 0, 0.3);
+  .text-gradient-peach {
+    background: linear-gradient(135deg, #ff9233 0%, #f74e88 50%, #a06be0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  .card-glow-hover:hover {
-    box-shadow: 0 0 0 1px rgba(184, 164, 212, 0.2), 0 8px 32px rgba(0, 0, 0, 0.4);
+  .text-gradient-sky {
+    background: linear-gradient(135deg, #4da9ff 0%, #a06be0 50%, #f74e88 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .card-shadow {
+    box-shadow: 0 2px 12px rgba(180, 140, 200, 0.15), 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .card-shadow-hover {
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .card-shadow-hover:hover {
+    box-shadow: 0 6px 24px rgba(180, 140, 200, 0.25), 0 2px 8px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .sticker-shadow {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
   }
 
   .perspective-1000 {
@@ -73,12 +87,26 @@
   .rotate-y-180 {
     transform: rotateY(180deg);
   }
+
+  .bg-dots {
+    background-image: radial-gradient(circle, rgba(200, 170, 220, 0.2) 1.5px, transparent 1.5px);
+    background-size: 20px 20px;
+  }
+
+  .bg-confetti {
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255, 143, 179, 0.15) 2px, transparent 4px),
+      radial-gradient(circle at 80% 60%, rgba(160, 107, 224, 0.12) 2px, transparent 4px),
+      radial-gradient(circle at 50% 80%, rgba(255, 210, 51, 0.12) 2px, transparent 4px),
+      radial-gradient(circle at 30% 50%, rgba(77, 169, 255, 0.1) 2px, transparent 4px);
+    background-size: 60px 60px, 80px 80px, 50px 50px, 70px 70px;
+  }
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -91,9 +119,58 @@
   to { opacity: 1; }
 }
 
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 8px rgba(184, 164, 212, 0.3); }
-  50% { box-shadow: 0 0 16px rgba(184, 164, 212, 0.5); }
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 12px rgba(247, 78, 136, 0.3); }
+  50% { box-shadow: 0 0 24px rgba(247, 78, 136, 0.5); }
+}
+
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pop {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.4; transform: scale(0.8) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+}
+
+@keyframes stamp {
+  0% { transform: scale(3) rotate(-15deg); opacity: 0; }
+  100% { transform: scale(1) rotate(-8deg); opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 .animate-fade-in-up {
@@ -105,5 +182,37 @@
 }
 
 .animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.animate-bounce-in {
+  animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pop {
+  animation: pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-sparkle {
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+.animate-stamp {
+  animation: stamp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s ease-out forwards;
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
 }
